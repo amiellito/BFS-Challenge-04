@@ -9,7 +9,16 @@
   
  
   
-    <img src="<%= catImage %>">
+    <img src="<%= catImage.url %>">
+
+    <form action="/upvote/<%=catImage._id%>?_method=PATCH" method="POST">
+      <button id="upVoted">upvote</button>
+    </form>
+
+    <form action="/downvote/<%=catImage._id%>?_method=PATCH" method="POST">
+      <button id="downVoted">downvote</button>
+    </form>
+
   
 
 

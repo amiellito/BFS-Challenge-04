@@ -1,42 +1,74 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const ejs = require("ejs");
 const mongoose = require("mongoose");
+const methodOverride = require("method-override");
 
 const app = express();
 
 app.set("view engine", "ejs");
+mongoose.set('useFindAndModify', false);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+app.use(methodOverride("_method"));
 
-mongoose.connect("mongodb://localhost:27017/catvoteDB", {useNewParser:true, useUnifiedTopology:true});
+
+mongoose.connect("mongodb://localhost:27017/catvoteDB", {
+  useNewUrlParser:true, 
+  useUnifiedTopology:true
+}).then(()=> {
+  console.log("Connected to the database");
+}).catch(err => {
+  console.log("Error:" + err.message);
+});
 
 const catSchema = {
-  user_id: String,
   url: String,
-  vote: Number
+  vote: 0
 };
 
 const Cat = mongoose.model("Image", catSchema);
 
-
-var catArr = [] //push voted cat images here. 
-
-//loop through catArr and display cat images
 
 /////////////////////////ROUTES////////////////////////
 
 app.get("/", function(req, res){
   Cat.find(function(err, foundCat){
     if(!err){
-      const catImage = foundCat[Math.floor(Math.random() * foundCat.length)].url;
-      res.render('index', {catImage:catImage});
+      const catImage = foundCat[Math.floor(Math.random() * foundCat.length)];
+      res.render('index', {catImage:catImage} );
+      console.log(foundCat);
     } else {
       console.log(err);
     }
   });
 });
+
+
+/////////////////////////VOTES////////////////////////
+
+//UPDATE VOTE VALUE//
+
+
+app.patch("/upvote/:id", function(req, res){
+	Cat.findByIdAndUpdate(req.params.id, {vote: 1} , {new: true}, function(err, updatedCat){
+		if(err) {
+			console.log(err);
+		} else {
+			res.redirect("/");
+		}
+	});
+})
+
+app.patch("/downvote/:id", function(req, res){
+	Cat.findByIdAndUpdate(req.params.id, {vote: -1} , {new: true}, function(err, updatedCat){
+		if(err) {
+			console.log(err);
+		} else {
+			res.redirect("/");
+		}
+	});
+})
 
 
 
