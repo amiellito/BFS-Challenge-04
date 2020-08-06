@@ -24,7 +24,7 @@ mongoose.connect("mongodb://localhost:27017/catvoteDB", {
 
 const catSchema = {
   url: String,
-  vote: 0
+  vote: {type: Number, default: 0}
 };
 
 const Cat = mongoose.model("Image", catSchema);
@@ -33,13 +33,33 @@ const Cat = mongoose.model("Image", catSchema);
 /////////////////////////ROUTES////////////////////////
 
 app.get("/", function(req, res){
-  Cat.find(function(err, foundCat){
+  Cat.find({}, function(err, foundCat){
     if(!err){
       const catImage = foundCat[Math.floor(Math.random() * foundCat.length)];
-      res.render('index', {catImage:catImage} );
-      console.log(foundCat);
+      const catUpVote = foundCat.filter(cat => cat.vote === 1);
+      const catDownVote = foundCat.filter(cat => cat.vote === -1);
+      res.render('index', {catImage, catUpVote, catDownVote} );
+      console.log(catDownVote)
     } else {
       console.log(err);
+    }
+  });
+});
+
+/////////////////////////ADD NEW CATS////////////////////////
+
+app.post("/", function(req, res){
+  const newCatImage = new Cat({
+    url: req.body.catUrl.replace(/['"]+/g, '' )
+  });
+
+  var newCat = newCatImage.url
+  
+  newCatImage.save(function(err){
+    if(!err){
+      res.render('success', {newCat:newCat});
+    } else {
+      res.send(err)
     }
   });
 });
@@ -69,9 +89,6 @@ app.patch("/downvote/:id", function(req, res){
 		}
 	});
 })
-
-
-
 
 app.listen(3000, function(){
   console.log("Listen port 3000")
