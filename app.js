@@ -38,8 +38,7 @@ app.get("/", function(req, res){
       const catImage = foundCat[Math.floor(Math.random() * foundCat.length)];
       const catUpVote = foundCat.filter(cat => cat.vote === 1);
       const catDownVote = foundCat.filter(cat => cat.vote === -1);
-      res.render('index', {catImage, catUpVote, catDownVote} );
-      console.log(catDownVote)
+      res.render('index', {catImage, catUpVote, catDownVote});
     } else {
       console.log(err);
     }

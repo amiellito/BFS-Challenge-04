@@ -3,28 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
   <title> Cat Vote</title>
 </head>
 <body>
+
+<div class="main-title">
+  <img class="main-image" src="img/fancy-cat.jpg">
+  <h1>The Menagerie</h1> 
+  <p> of Feline Facsimiles</p>
+</div>
+   
+<div class="main">
+      <img class="hero" src="<%= catImage.url %>">
   
- 
+      <div class="voting">
+        <form action="/upvote/<%=catImage._id%>?_method=PATCH" method="POST">
+          <button class="button up" id="upVoted"><i class="fas fa-thumbs-up"></i>Love it!</button>
+        </form>
+        
+        <form action="/downvote/<%=catImage._id%>?_method=PATCH" method="POST">
+          <button class="button down" id="downVoted"><i class="fas fa-thumbs-down"></i>Nope it!</button>
+        </form>
+      </div>
+</div>
+
+<div class="submit">
+  <p>Got a cat image you want to share? Post it here!</p>
+  <form class="submitForm" action="/" method="post">
+    <input type="text" placeholder="Paste cat image URL" name="catUrl">
+    <button class="button" type="submit"><i class="fas fa-paw"></i>MOAR CATS!</button>
+  </form>
+</div>
+
+    <div class="gallery-container">
+      <h2>The loved</h2>
+      <hr class="spacer">
+      <p>Floofs with a squishy center!</p>
+          <div class="gallery upvoted">
+              <% catUpVote.forEach(function(catUpVote){ %>
+
+                          <div><img class="votedImg" src="<%= catUpVote.url %>"></div>
+
+              <% }); %>
+          </div>
+    </div>
   
-    <img src="<%= catImage.url %>">
+    <div class="gallery-container noped">
+        <h2>The noped</h2>
+        <hr class="spacer">
+        <p>Alpha predators with murderous intent!</p>
+            <div class="gallery downvoted">
+                <% catDownVote.forEach(function(catDownVote){ %>
 
-    <form action="/upvote/<%=catImage._id%>?_method=PATCH" method="POST">
-      <button id="upVoted">upvote</button>
-    </form>
+                            <div><img class="votedImg" src="<%= catDownVote.url %>"></div>
 
-    <form action="/downvote/<%=catImage._id%>?_method=PATCH" method="POST">
-      <button id="downVoted">downvote</button>
-    </form>
+                <% }); %>
+            </div>
+    </div>
 
-    <form class="submitForm" action="/" method="post">
-      <input type="text" placeholder="paste cat image url" name="catUrl">
-      <button class="myButton" type="submit">ADD CATS!</button>
-    </form>
+    <footer><p>Footer stuff's a footin'</p><i class="fab fa-github"></i></footer>
 
-  
+    <script src="https://kit.fontawesome.com/0e67ce7919.js" crossorigin="anonymous"></script>
 
 </body>
 </html>
